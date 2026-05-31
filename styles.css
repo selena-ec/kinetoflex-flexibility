@@ -1,0 +1,526 @@
+:root {
+  color-scheme: light;
+  --bg: #f7f5f0;
+  --panel: #ffffff;
+  --ink: #20242c;
+  --muted: #686f79;
+  --line: #ded8cf;
+  --blue: #236e9f;
+  --blue-soft: #e4f1f7;
+  --green: #427a5b;
+  --green-soft: #e4f0e7;
+  --rose: #a24d66;
+  --rose-soft: #f5e5ea;
+  --amber: #a66a2c;
+  --amber-soft: #f4eadb;
+  --rest: #5f6470;
+  --rest-soft: #ededee;
+  --shadow: 0 16px 40px rgba(50, 45, 36, 0.09);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+.app-header > *,
+.summary-band > *,
+.week-header > *,
+.area-progress,
+.day-card {
+  min-width: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px clamp(18px, 4vw, 56px);
+  background: #176f9f;
+  color: #fff;
+}
+
+.eyebrow,
+.cycle-label {
+  margin: 0 0 6px;
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+  overflow-wrap: break-word;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 750;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  margin-bottom: 8px;
+  font-size: 1.35rem;
+}
+
+main {
+  width: min(1180px, calc(100% - 32px));
+  margin: 28px auto 56px;
+}
+
+.secondary-button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.summary-band,
+.sync-band,
+.progress-section,
+.controls,
+.week {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.summary-band {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.summary-band p {
+  max-width: 760px;
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.total-progress {
+  display: grid;
+  gap: 2px;
+  min-width: 180px;
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  text-align: center;
+}
+
+.total-progress span:first-child {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.sync-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.sync-band p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.plain-button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid #cfc8bd;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--blue);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.plain-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.progress-section,
+.controls,
+.week {
+  margin-top: 18px;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.area-progress {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.area-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.area-title-row strong {
+  font-size: 0.98rem;
+}
+
+.area-title-row span {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.meter {
+  overflow: hidden;
+  height: 10px;
+  border-radius: 999px;
+  background: #ece7de;
+}
+
+.meter-fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: var(--blue);
+  transition: width 160ms ease;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+  box-shadow: none;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+select,
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #cfc8bd;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+select,
+input {
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+textarea {
+  min-height: 86px;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+.week-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.week-header p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.cycle-label {
+  color: var(--blue);
+}
+
+.week-progress {
+  display: grid;
+  justify-items: center;
+  min-width: 90px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.week-progress span:first-child {
+  font-size: 1.28rem;
+}
+
+.day-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.day-card {
+  display: grid;
+  min-height: 176px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.day-card.complete {
+  border-color: rgba(66, 122, 91, 0.4);
+  background: #fbfdfb;
+}
+
+.day-card.rest {
+  background: var(--rest-soft);
+}
+
+.day-card.rest .day-topline {
+  display: grid;
+  gap: 8px;
+}
+
+.day-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.day-number {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.rest-picker {
+  width: 100%;
+  min-height: 32px;
+  padding: 0 8px;
+  font-size: 0.78rem;
+}
+
+.check-row {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 8px;
+  align-items: start;
+  margin-top: 12px;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.check-row input {
+  width: 20px;
+  min-height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--green);
+}
+
+.area-pill {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.hip {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.front {
+  background: var(--rose-soft);
+  color: var(--rose);
+}
+
+.middle {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.pancake {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.rest-pill {
+  background: #fff;
+  color: var(--rest);
+}
+
+.day-card.rest .rest-pill {
+  align-self: end;
+}
+
+.workout-meta {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.session-note {
+  align-self: end;
+  margin-top: 12px;
+}
+
+.session-note input {
+  min-height: 36px;
+  padding: 0 10px;
+  font-size: 0.84rem;
+}
+
+.notes-panel {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.notes-panel summary {
+  cursor: pointer;
+  color: var(--blue);
+  font-weight: 800;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.wide-note {
+  margin-top: 12px;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .progress-grid,
+  .notes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .day-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header,
+  .summary-band,
+  .sync-band,
+  .week-header {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  main {
+    width: calc(100% - 20px);
+    margin-top: 14px;
+  }
+
+  .app-header {
+    padding: 28px 20px;
+  }
+
+  h1 {
+    font-size: 2.55rem;
+    line-height: 1.06;
+    word-break: normal;
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .summary-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .total-progress {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .summary-band,
+  .sync-band,
+  .progress-section,
+  .controls,
+  .week {
+    padding: 20px;
+  }
+
+  .progress-grid,
+  .notes-grid,
+  .day-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .controls label {
+    width: 100%;
+  }
+}

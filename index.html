@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beginner Flexibility Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="config.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Kinetoflex ballet support</p>
+        <h1>Beginner Flexibility Tracker</h1>
+      </div>
+      <button class="secondary-button" id="resetProgress" type="button">Reset progress</button>
+    </header>
+
+    <main>
+      <section class="summary-band" aria-labelledby="summaryTitle">
+        <div>
+          <h2 id="summaryTitle">12-week rolling plan</h2>
+          <p>
+            Track the beginner Hip Mobility, Front Split, Middle Split, and Pancake workouts.
+            Each week has six workouts and one movable rest day.
+          </p>
+        </div>
+        <div class="total-progress" aria-label="Total completed workouts">
+          <span id="totalCompleted">0</span>
+          <span>of 72 workouts complete</span>
+        </div>
+      </section>
+
+      <section class="sync-band" aria-label="Sync status">
+        <p id="syncStatus">Checking sync status...</p>
+        <button class="plain-button" id="syncNow" type="button">Sync now</button>
+      </section>
+
+      <section class="progress-section" aria-labelledby="progressTitle">
+        <h2 id="progressTitle">Area progress</h2>
+        <div class="progress-grid" id="progressGrid"></div>
+      </section>
+
+      <section class="controls" aria-label="Tracker controls">
+        <label>
+          Jump to week
+          <select id="weekJump"></select>
+        </label>
+        <label>
+          View
+          <select id="viewFilter">
+            <option value="all">All weeks</option>
+            <option value="current">Current week</option>
+            <option value="incomplete">Incomplete weeks</option>
+          </select>
+        </label>
+      </section>
+
+      <div id="weeks"></div>
+    </main>
+
+    <template id="weekTemplate">
+      <article class="week" data-week>
+        <div class="week-header">
+          <div>
+            <p class="cycle-label" data-cycle></p>
+            <h2 data-title></h2>
+            <p data-areas></p>
+          </div>
+          <div class="week-progress" aria-label="Week progress">
+            <span data-week-count>0/6</span>
+            <span>complete</span>
+          </div>
+        </div>
+
+        <div class="day-list" data-days></div>
+
+        <details class="notes-panel">
+          <summary>Weekly notes</summary>
+          <div class="notes-grid">
+            <label>
+              Energy
+              <textarea data-note="energy" placeholder="Energy level"></textarea>
+            </label>
+            <label>
+              Soreness
+              <textarea data-note="soreness" placeholder="Soreness level"></textarea>
+            </label>
+            <label>
+              Best area
+              <textarea data-note="best" placeholder="What felt best"></textarea>
+            </label>
+            <label>
+              Restricted area
+              <textarea data-note="restricted" placeholder="What felt tight"></textarea>
+            </label>
+          </div>
+          <label class="wide-note">
+            Range, comfort, or pain notes
+            <textarea data-note="range" placeholder="Anything pinchy, sharp, painful, easier, or more controlled"></textarea>
+          </label>
+        </details>
+      </article>
+    </template>
+  </body>
+</html>
