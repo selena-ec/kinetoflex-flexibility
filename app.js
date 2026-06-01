@@ -1,4 +1,4 @@
-const STORAGE_KEY = "beginnerFlexibilityTracker.v1";
+const STORAGE_KEY = "beginnerFlexibilityTracker.daily.v1";
 const CLOUD_CONFIG = window.FLEX_TRACKER_CONFIG || {};
 const CLOUD_URL = (CLOUD_CONFIG.GOOGLE_APPS_SCRIPT_URL || "").trim();
 const CLOUD_TOKEN = CLOUD_CONFIG.SYNC_TOKEN || "";
@@ -6,26 +6,14 @@ const CLOUD_ENABLED = Boolean(CLOUD_URL);
 const SAVE_DEBOUNCE_MS = 700;
 
 const cycle = [
-  {
-    label: "Week A",
-    areas: ["Hip Mobility", "Front Split", "Middle Split"],
-    skipped: "Pancake",
-  },
-  {
-    label: "Week B",
-    areas: ["Hip Mobility", "Front Split", "Pancake"],
-    skipped: "Middle Split",
-  },
-  {
-    label: "Week C",
-    areas: ["Hip Mobility", "Middle Split", "Pancake"],
-    skipped: "Front Split",
-  },
-  {
-    label: "Week D",
-    areas: ["Front Split", "Middle Split", "Pancake"],
-    skipped: "Hip Mobility",
-  },
+  sessionDay("Hip Mobility", 1),
+  sessionDay("Front Split", 1),
+  sessionDay("Middle Split", 1),
+  sessionDay("Pancake", 1),
+  sessionDay("Hip Mobility", 2),
+  sessionDay("Front Split", 2),
+  sessionDay("Middle Split", 2),
+  sessionDay("Pancake", 2),
 ];
 
 const areaClass = {
@@ -67,7 +55,7 @@ syncNow.addEventListener("click", () => {
 });
 
 resetProgress.addEventListener("click", () => {
-  const confirmed = window.confirm("Reset all checkmarks, notes, and moved rest days?");
+  const confirmed = window.confirm("Reset all checkmarks and notes?");
   if (!confirmed) return;
   localStorage.removeItem(STORAGE_KEY);
   Object.keys(state).forEach((key) => delete state[key]);
@@ -79,19 +67,16 @@ resetProgress.addEventListener("click", () => {
 
 function buildPlan() {
   return Array.from({ length: 12 }, (_, index) => {
-    const cycleWeek = cycle[index % cycle.length];
     const weekNumber = index + 1;
-    const days = [
-      ...cycleWeek.areas.map((area) => sessionDay(area, 1)),
-      { type: "rest" },
-      ...cycleWeek.areas.map((area) => sessionDay(area, 2)),
-    ];
+    const days = Array.from({ length: 7 }, (__, dayIndex) => {
+      const planDayIndex = index * 7 + dayIndex;
+      return cycle[planDayIndex % cycle.length];
+    });
 
     return {
       weekNumber,
-      cycleLabel: cycleWeek.label,
-      skipped: cycleWeek.skipped,
-      areas: cycleWeek.areas,
+      cycleLabel: `Days ${index * 7 + 1}-${index * 7 + 7}`,
+      areas: [...new Set(days.map((day) => day.area))],
       days,
     };
   });
@@ -99,7 +84,6 @@ function buildPlan() {
 
 function sessionDay(area, workoutNumber) {
   return {
-    type: "workout",
     area,
     workoutNumber,
     title: `${area} Beginner - Workout ${workoutNumber}`,
@@ -110,7 +94,6 @@ function defaultState() {
   return {
     completed: {},
     notes: {},
-    restSlots: {},
     updatedAt: "",
   };
 }
@@ -253,7 +236,6 @@ function renderProgress() {
 
   plan.forEach((week) => {
     week.days.forEach((day, dayIndex) => {
-      if (day.type !== "workout") return;
       planned[day.area] = (planned[day.area] || 0) + 1;
       const id = itemId(week.weekNumber, dayIndex);
       if (state.completed[id]) {
@@ -296,16 +278,12 @@ function renderWeeks() {
     const daysEl = fragment.querySelector("[data-days]");
 
     weekEl.dataset.week = String(week.weekNumber);
-    fragment.querySelector("[data-cycle]").textContent = `${week.cycleLabel} - skips ${week.skipped}`;
+    fragment.querySelector("[data-cycle]").textContent = week.cycleLabel;
     fragment.querySelector("[data-title]").textContent = `Week ${week.weekNumber}`;
     fragment.querySelector("[data-areas]").textContent = week.areas.join(" + ");
 
-    const restSlot = getRestSlot(week.weekNumber);
-    const displayDays = moveRestDay(week.days, restSlot);
-
-    displayDays.forEach((day, displayIndex) => {
-      const originalIndex = day.originalIndex;
-      daysEl.append(renderDay(week.weekNumber, displayIndex, originalIndex, day));
+    week.days.forEach((day, dayIndex) => {
+      daysEl.append(renderDay(week.weekNumber, dayIndex, day));
     });
 
     hydrateWeekNotes(fragment, week.weekNumber);
@@ -314,19 +292,15 @@ function renderWeeks() {
   });
 }
 
-function renderDay(weekNumber, displayIndex, originalIndex, day) {
-  const id = itemId(weekNumber, originalIndex);
+function renderDay(weekNumber, dayIndex, day) {
+  const id = itemId(weekNumber, dayIndex);
   const card = document.createElement("section");
-  card.className = `day-card ${day.type === "rest" ? "rest" : ""}`;
+  card.className = "day-card";
   if (state.completed[id]) card.classList.add("complete");
 
   const top = document.createElement("div");
   top.className = "day-topline";
-  top.innerHTML = `<span class="day-number">Day ${displayIndex + 1}</span>`;
-
-  if (day.type === "rest") {
-    top.append(renderRestPicker(weekNumber, displayIndex));
-  }
+  top.innerHTML = `<span class="day-number">Day ${dayIndex + 1}</span>`;
 
   const checkLabel = document.createElement("label");
   checkLabel.className = "check-row";
@@ -340,45 +314,21 @@ function renderDay(weekNumber, displayIndex, originalIndex, day) {
   });
 
   const title = document.createElement("span");
-  title.textContent = day.type === "rest" ? "Rest" : day.title;
+  title.textContent = day.title;
   checkLabel.append(checkbox, title);
 
   const pill = document.createElement("span");
-  pill.className = `area-pill ${day.type === "rest" ? "rest-pill" : areaClass[day.area]}`;
-  pill.textContent = day.type === "rest" ? "Recovery day" : day.area;
+  pill.className = `area-pill ${areaClass[day.area]}`;
+  pill.textContent = day.area;
 
   card.append(top, checkLabel, pill);
 
-  if (day.type === "workout") {
-    const meta = document.createElement("p");
-    meta.className = "workout-meta";
-    meta.textContent = `Beginner level.`;
-    card.append(meta, renderSessionNote(id));
-  }
+  const meta = document.createElement("p");
+  meta.className = "workout-meta";
+  meta.textContent = `Beginner level.`;
+  card.append(meta, renderSessionNote(id));
 
   return card;
-}
-
-function renderRestPicker(weekNumber, displayIndex) {
-  const picker = document.createElement("select");
-  picker.className = "rest-picker";
-  picker.setAttribute("aria-label", `Move rest day for week ${weekNumber}`);
-
-  for (let index = 0; index < 7; index += 1) {
-    const option = document.createElement("option");
-    option.value = String(index);
-    option.textContent = `Rest on Day ${index + 1}`;
-    option.selected = index === displayIndex;
-    picker.append(option);
-  }
-
-  picker.addEventListener("change", () => {
-    state.restSlots[weekNumber] = Number(picker.value);
-    saveState();
-    render();
-  });
-
-  return picker;
 }
 
 function renderSessionNote(id) {
@@ -414,9 +364,9 @@ function hydrateWeekNotes(fragment, weekNumber) {
 function updateWeekCount(fragment, weekNumber) {
   const week = plan[weekNumber - 1];
   const completed = week.days.filter((day, index) => {
-    return day.type === "workout" && state.completed[itemId(weekNumber, index)];
+    return state.completed[itemId(weekNumber, index)];
   }).length;
-  fragment.querySelector("[data-week-count]").textContent = `${completed}/6`;
+  fragment.querySelector("[data-week-count]").textContent = `${completed}/7`;
 }
 
 function shouldShowWeek(week) {
@@ -425,7 +375,7 @@ function shouldShowWeek(week) {
   if (filter === "current") return week.weekNumber === getCurrentWeekNumber();
   if (filter === "incomplete") {
     return week.days.some((day, index) => {
-      return day.type === "workout" && !state.completed[itemId(week.weekNumber, index)];
+      return !state.completed[itemId(week.weekNumber, index)];
     });
   }
   return true;
@@ -434,26 +384,14 @@ function shouldShowWeek(week) {
 function getCurrentWeekNumber() {
   const firstIncomplete = plan.find((week) => {
     return week.days.some((day, index) => {
-      return day.type === "workout" && !state.completed[itemId(week.weekNumber, index)];
+      return !state.completed[itemId(week.weekNumber, index)];
     });
   });
   return firstIncomplete?.weekNumber || 12;
 }
 
-function getRestSlot(weekNumber) {
-  return Number.isInteger(state.restSlots[weekNumber]) ? state.restSlots[weekNumber] : 3;
-}
-
-function moveRestDay(days, restSlot) {
-  const annotated = days.map((day, index) => ({ ...day, originalIndex: index }));
-  const restIndex = annotated.findIndex((day) => day.type === "rest");
-  const [restDay] = annotated.splice(restIndex, 1);
-  annotated.splice(restSlot, 0, restDay);
-  return annotated;
-}
-
 function itemId(weekNumber, dayIndex) {
-  return `week-${weekNumber}-day-${dayIndex}`;
+  return `daily-week-${weekNumber}-day-${dayIndex}`;
 }
 
 function weekNoteId(weekNumber) {
@@ -464,7 +402,7 @@ function renderWeekJump() {
   plan.forEach((week) => {
     const option = document.createElement("option");
     option.value = String(week.weekNumber);
-    option.textContent = `Week ${week.weekNumber} (${week.cycleLabel})`;
+    option.textContent = `Week ${week.weekNumber}`;
     weekJump.append(option);
   });
 }

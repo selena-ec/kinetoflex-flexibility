@@ -1,8 +1,12 @@
 const cycle = [
-  ["Hip Mobility", "Front Split", "Middle Split"],
-  ["Hip Mobility", "Front Split", "Pancake"],
-  ["Hip Mobility", "Middle Split", "Pancake"],
-  ["Front Split", "Middle Split", "Pancake"],
+  ["Hip Mobility", 1],
+  ["Front Split", 1],
+  ["Middle Split", 1],
+  ["Pancake", 1],
+  ["Hip Mobility", 2],
+  ["Front Split", 2],
+  ["Middle Split", 2],
+  ["Pancake", 2],
 ];
 
 const counts = {
@@ -12,38 +16,40 @@ const counts = {
   Pancake: 0,
 };
 
-let workoutSlots = 0;
-let restSlots = 0;
+const workoutCounts = {
+  "Hip Mobility": { 1: 0, 2: 0 },
+  "Front Split": { 1: 0, 2: 0 },
+  "Middle Split": { 1: 0, 2: 0 },
+  Pancake: { 1: 0, 2: 0 },
+};
 
-for (let week = 0; week < 12; week += 1) {
-  const areas = cycle[week % cycle.length];
-  if (new Set(areas).size !== 3) {
-    throw new Error(`Week ${week + 1} does not have 3 unique areas.`);
-  }
+const cycleCoverage = new Set(cycle.map(([area]) => area));
+assertEqual(cycle.length, 8, "cycle length");
+assertEqual(cycleCoverage.size, 4, "areas per cycle");
 
-  workoutSlots += areas.length * 2;
-  restSlots += 1;
-
-  for (const area of areas) {
-    counts[area] += 2;
-  }
+for (let day = 0; day < 84; day += 1) {
+  const [area, workoutNumber] = cycle[day % cycle.length];
+  counts[area] += 1;
+  workoutCounts[area][workoutNumber] += 1;
 }
 
-const expectedCounts = Object.fromEntries(Object.keys(counts).map((area) => [area, 18]));
-
-assertEqual(workoutSlots, 72, "workout slots");
-assertEqual(restSlots, 12, "rest slots");
-assertEqual(workoutSlots + restSlots, 84, "total slots");
-
-for (const [area, expected] of Object.entries(expectedCounts)) {
-  assertEqual(counts[area], expected, `${area} sessions`);
+for (const area of Object.keys(counts)) {
+  assertEqual(counts[area], 21, `${area} sessions`);
 }
+
+for (const area of Object.keys(workoutCounts)) {
+  assertEqual(workoutCounts[area][1], 11, `${area} workout 1 sessions`);
+  assertEqual(workoutCounts[area][2], 10, `${area} workout 2 sessions`);
+}
+
+assertEqual(Object.values(counts).reduce((sum, count) => sum + count, 0), 84, "workout slots");
 
 console.log("Plan verification passed:", {
-  totalSlots: workoutSlots + restSlots,
-  workoutSlots,
-  restSlots,
+  totalSlots: 84,
+  workoutSlots: 84,
+  restSlots: 0,
   counts,
+  workoutCounts,
 });
 
 function assertEqual(actual, expected, label) {

@@ -9,11 +9,10 @@ This is a 12-week Beginner-level flexibility plan based on the four areas in The
 - Middle Split
 - Pancake
 
-The plan uses an even 4-week rolling cycle. Each week includes 3 focus areas, with 2 sessions per area:
+The plan uses a repeating 8-day cycle with one workout every day. Each 8-day block includes Workout 1 and Workout 2 for all four areas:
 
-- Workout 1 early in the week
-- Workout 2 later in the week
-- 1 movable rest day
+- Days 1-4: Workout 1 for each area
+- Days 5-8: Workout 2 for each area
 
 Follow-along videos count as alternate formats for the same workout. They are not separate sessions.
 
@@ -30,99 +29,61 @@ Use only these 8 sessions:
 - Pancake Beginner - Workout 1
 - Pancake Beginner - Workout 2
 
-## Four-Week Rolling Cycle
+## Eight-Day Rolling Cycle
 
-Pancake is delayed until after Week A, but volume is even across the full 4-week cycle.
-
-| Cycle Week | Areas Trained | Skipped Area |
-|---|---|---|
-| Week A | Hip Mobility, Front Split, Middle Split | Pancake |
-| Week B | Hip Mobility, Front Split, Pancake | Middle Split |
-| Week C | Hip Mobility, Middle Split, Pancake | Front Split |
-| Week D | Front Split, Middle Split, Pancake | Hip Mobility |
-
-Over each 4-week cycle, every area is trained in 3 weeks and skipped in 1 week.
-
-## Four-Week Volume
-
-| Area | Sessions Per 4 Weeks |
-|---|---:|
-| Hip Mobility | 6 |
-| Front Split | 6 |
-| Middle Split | 6 |
-| Pancake | 6 |
-
-## Weekly Layout
-
-The rest day is movable. The default placement is Day 4 because it splits the week into 3 training days, 1 rest day, and 3 training days.
-
-| Day Slot | Session |
+| Cycle Day | Session |
 |---|---|
-| Day 1 | Selected Area 1 - Workout 1 |
-| Day 2 | Selected Area 2 - Workout 1 |
-| Day 3 | Selected Area 3 - Workout 1 |
-| Day 4 | Rest |
-| Day 5 | Selected Area 1 - Workout 2 |
-| Day 6 | Selected Area 2 - Workout 2 |
-| Day 7 | Selected Area 3 - Workout 2 |
+| Day 1 | Hip Mobility Beginner - Workout 1 |
+| Day 2 | Front Split Beginner - Workout 1 |
+| Day 3 | Middle Split Beginner - Workout 1 |
+| Day 4 | Pancake Beginner - Workout 1 |
+| Day 5 | Hip Mobility Beginner - Workout 2 |
+| Day 6 | Front Split Beginner - Workout 2 |
+| Day 7 | Middle Split Beginner - Workout 2 |
+| Day 8 | Pancake Beginner - Workout 2 |
 
-## 12-Week Schedule
+Every 8 days, all four areas are trained twice.
 
-### Week 1 - Week A
+## 12-Week Volume
+
+The 12-week tracker covers 84 calendar days, which is 10 full 8-day cycles plus the first 4 days of the next cycle.
+
+| Area | Sessions Per 12 Weeks |
+|---|---:|
+| Hip Mobility | 21 |
+| Front Split | 21 |
+| Middle Split | 21 |
+| Pancake | 21 |
+
+## Weekly Display
+
+The app still groups the plan into 12 calendar weeks for tracking and notes. Each week contains 7 workouts. Because the training cycle is 8 days long, the weekly display naturally shifts through the cycle instead of restarting every Monday.
+
+### Week 1
 
 | Day Slot | Session |
 |---|---|
 | Day 1 | Hip Mobility Beginner - Workout 1 |
 | Day 2 | Front Split Beginner - Workout 1 |
 | Day 3 | Middle Split Beginner - Workout 1 |
-| Day 4 | Rest |
+| Day 4 | Pancake Beginner - Workout 1 |
 | Day 5 | Hip Mobility Beginner - Workout 2 |
 | Day 6 | Front Split Beginner - Workout 2 |
 | Day 7 | Middle Split Beginner - Workout 2 |
 
-### Week 2 - Week B
+### Week 2
 
 | Day Slot | Session |
 |---|---|
-| Day 1 | Hip Mobility Beginner - Workout 1 |
-| Day 2 | Front Split Beginner - Workout 1 |
-| Day 3 | Pancake Beginner - Workout 1 |
-| Day 4 | Rest |
-| Day 5 | Hip Mobility Beginner - Workout 2 |
-| Day 6 | Front Split Beginner - Workout 2 |
-| Day 7 | Pancake Beginner - Workout 2 |
+| Day 1 | Pancake Beginner - Workout 2 |
+| Day 2 | Hip Mobility Beginner - Workout 1 |
+| Day 3 | Front Split Beginner - Workout 1 |
+| Day 4 | Middle Split Beginner - Workout 1 |
+| Day 5 | Pancake Beginner - Workout 1 |
+| Day 6 | Hip Mobility Beginner - Workout 2 |
+| Day 7 | Front Split Beginner - Workout 2 |
 
-### Week 3 - Week C
-
-| Day Slot | Session |
-|---|---|
-| Day 1 | Hip Mobility Beginner - Workout 1 |
-| Day 2 | Middle Split Beginner - Workout 1 |
-| Day 3 | Pancake Beginner - Workout 1 |
-| Day 4 | Rest |
-| Day 5 | Hip Mobility Beginner - Workout 2 |
-| Day 6 | Middle Split Beginner - Workout 2 |
-| Day 7 | Pancake Beginner - Workout 2 |
-
-### Week 4 - Week D
-
-| Day Slot | Session |
-|---|---|
-| Day 1 | Front Split Beginner - Workout 1 |
-| Day 2 | Middle Split Beginner - Workout 1 |
-| Day 3 | Pancake Beginner - Workout 1 |
-| Day 4 | Rest |
-| Day 5 | Front Split Beginner - Workout 2 |
-| Day 6 | Middle Split Beginner - Workout 2 |
-| Day 7 | Pancake Beginner - Workout 2 |
-
-### Weeks 5-8
-
-Repeat Weeks 1-4.
-
-### Weeks 9-12
-
-Repeat Weeks 1-4 again.
+Weeks 3-12 continue the same 8-day rolling sequence.
 
 ## Weekly Notes
 
