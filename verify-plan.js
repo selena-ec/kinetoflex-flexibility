@@ -27,26 +27,26 @@ const cycleCoverage = new Set(cycle.map(([area]) => area));
 assertEqual(cycle.length, 8, "cycle length");
 assertEqual(cycleCoverage.size, 4, "areas per cycle");
 
-for (let day = 0; day < 84; day += 1) {
+for (let day = 0; day < 48; day += 1) {
   const [area, workoutNumber] = cycle[day % cycle.length];
   counts[area] += 1;
   workoutCounts[area][workoutNumber] += 1;
 }
 
 for (const area of Object.keys(counts)) {
-  assertEqual(counts[area], 21, `${area} sessions`);
+  assertEqual(counts[area], 12, `${area} sessions`);
 }
 
 for (const area of Object.keys(workoutCounts)) {
-  assertEqual(workoutCounts[area][1], 11, `${area} workout 1 sessions`);
-  assertEqual(workoutCounts[area][2], 10, `${area} workout 2 sessions`);
+  assertEqual(workoutCounts[area][1], 6, `${area} workout 1 sessions`);
+  assertEqual(workoutCounts[area][2], 6, `${area} workout 2 sessions`);
 }
 
-assertEqual(Object.values(counts).reduce((sum, count) => sum + count, 0), 84, "workout slots");
+assertEqual(Object.values(counts).reduce((sum, count) => sum + count, 0), 48, "workout slots");
 
 console.log("Plan verification passed:", {
-  totalSlots: 84,
-  workoutSlots: 84,
+  totalSlots: 48,
+  workoutSlots: 48,
   restSlots: 0,
   counts,
   workoutCounts,

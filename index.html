@@ -20,15 +20,15 @@
     <main>
       <section class="summary-band" aria-labelledby="summaryTitle">
         <div>
-          <h2 id="summaryTitle">12-week rolling plan</h2>
+          <h2 id="summaryTitle">48-day rolling plan</h2>
           <p>
             Track the beginner Hip Mobility, Front Split, Middle Split, and Pancake workouts.
-            Train every day and cycle through all four areas every eight days.
+            Train every day for six complete 8-day cycles.
           </p>
         </div>
         <div class="total-progress" aria-label="Total completed workouts">
           <span id="totalCompleted">0</span>
-          <span>of 84 workouts complete</span>
+          <span>of 48 workouts complete</span>
         </div>
       </section>
 
@@ -44,15 +44,15 @@
 
       <section class="controls" aria-label="Tracker controls">
         <label>
-          Jump to week
+          Jump to cycle
           <select id="weekJump"></select>
         </label>
         <label>
           View
           <select id="viewFilter">
-            <option value="all">All weeks</option>
-            <option value="current">Current week</option>
-            <option value="incomplete">Incomplete weeks</option>
+            <option value="all">All cycles</option>
+            <option value="current">Current cycle</option>
+            <option value="incomplete">Incomplete cycles</option>
           </select>
         </label>
       </section>
@@ -68,8 +68,8 @@
             <h2 data-title></h2>
             <p data-areas></p>
           </div>
-          <div class="week-progress" aria-label="Week progress">
-            <span data-week-count>0/7</span>
+          <div class="week-progress" aria-label="Cycle progress">
+            <span data-week-count>0/8</span>
             <span>complete</span>
           </div>
         </div>
@@ -77,7 +77,7 @@
         <div class="day-list" data-days></div>
 
         <details class="notes-panel">
-          <summary>Weekly notes</summary>
+          <summary>Cycle notes</summary>
           <div class="notes-grid">
             <label>
               Energy

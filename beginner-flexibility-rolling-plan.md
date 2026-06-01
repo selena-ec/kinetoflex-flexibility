@@ -2,17 +2,14 @@
 
 ## Summary
 
-This is a 12-week Beginner-level flexibility plan based on the four areas in The Ultimate Flexibility Bundle:
+This is a 48-day Beginner-level flexibility plan based on the four areas in The Ultimate Flexibility Bundle:
 
 - Hip Mobility
 - Front Split
 - Middle Split
 - Pancake
 
-The plan uses a repeating 8-day cycle with one workout every day. Each 8-day block includes Workout 1 and Workout 2 for all four areas:
-
-- Days 1-4: Workout 1 for each area
-- Days 5-8: Workout 2 for each area
+The plan uses a repeating 8-day cycle with one workout every day. The full plan contains six complete 8-day cycles, so every area is trained evenly.
 
 Follow-along videos count as alternate formats for the same workout. They are not separate sessions.
 
@@ -44,22 +41,24 @@ Use only these 8 sessions:
 
 Every 8 days, all four areas are trained twice.
 
-## 12-Week Volume
+## 48-Day Volume
 
-The 12-week tracker covers 84 calendar days, which is 10 full 8-day cycles plus the first 4 days of the next cycle.
+The tracker covers 48 calendar days, which is 6 full 8-day cycles.
 
-| Area | Sessions Per 12 Weeks |
+| Area | Sessions Per 48 Days |
 |---|---:|
-| Hip Mobility | 21 |
-| Front Split | 21 |
-| Middle Split | 21 |
-| Pancake | 21 |
+| Hip Mobility | 12 |
+| Front Split | 12 |
+| Middle Split | 12 |
+| Pancake | 12 |
 
-## Weekly Display
+Each area includes 6 sessions of Workout 1 and 6 sessions of Workout 2.
 
-The app still groups the plan into 12 calendar weeks for tracking and notes. Each week contains 7 workouts. Because the training cycle is 8 days long, the weekly display naturally shifts through the cycle instead of restarting every Monday.
+## Cycle Display
 
-### Week 1
+The app groups the plan into six cycles. Each cycle contains the same 8-day sequence.
+
+### Cycle 1
 
 | Day Slot | Session |
 |---|---|
@@ -70,24 +69,13 @@ The app still groups the plan into 12 calendar weeks for tracking and notes. Eac
 | Day 5 | Hip Mobility Beginner - Workout 2 |
 | Day 6 | Front Split Beginner - Workout 2 |
 | Day 7 | Middle Split Beginner - Workout 2 |
+| Day 8 | Pancake Beginner - Workout 2 |
 
-### Week 2
+Cycles 2-6 repeat the same 8-day sequence.
 
-| Day Slot | Session |
-|---|---|
-| Day 1 | Pancake Beginner - Workout 2 |
-| Day 2 | Hip Mobility Beginner - Workout 1 |
-| Day 3 | Front Split Beginner - Workout 1 |
-| Day 4 | Middle Split Beginner - Workout 1 |
-| Day 5 | Pancake Beginner - Workout 1 |
-| Day 6 | Hip Mobility Beginner - Workout 2 |
-| Day 7 | Front Split Beginner - Workout 2 |
+## Cycle Notes
 
-Weeks 3-12 continue the same 8-day rolling sequence.
-
-## Weekly Notes
-
-At the end of each week, briefly record:
+At the end of each cycle, briefly record:
 
 - Energy level
 - Soreness level
@@ -98,4 +86,4 @@ At the end of each week, briefly record:
 
 ## Progress Rule
 
-Stay at Beginner for the full 12-week cycle unless the workouts feel controlled, pain-free, and repeatable. If one area progresses faster than the others, upgrade only that area after the cycle rather than changing everything at once.
+Stay at Beginner for the full 48-day plan unless the workouts feel controlled, pain-free, and repeatable. If one area progresses faster than the others, upgrade only that area after the cycle rather than changing everything at once.

@@ -1,4 +1,4 @@
-const STORAGE_KEY = "beginnerFlexibilityTracker.daily.v1";
+const STORAGE_KEY = "beginnerFlexibilityTracker.daily48.v1";
 const CLOUD_CONFIG = window.FLEX_TRACKER_CONFIG || {};
 const CLOUD_URL = (CLOUD_CONFIG.GOOGLE_APPS_SCRIPT_URL || "").trim();
 const CLOUD_TOKEN = CLOUD_CONFIG.SYNC_TOKEN || "";
@@ -66,16 +66,16 @@ resetProgress.addEventListener("click", () => {
 });
 
 function buildPlan() {
-  return Array.from({ length: 12 }, (_, index) => {
+  return Array.from({ length: 6 }, (_, index) => {
     const weekNumber = index + 1;
-    const days = Array.from({ length: 7 }, (__, dayIndex) => {
-      const planDayIndex = index * 7 + dayIndex;
+    const days = Array.from({ length: 8 }, (__, dayIndex) => {
+      const planDayIndex = index * 8 + dayIndex;
       return cycle[planDayIndex % cycle.length];
     });
 
     return {
       weekNumber,
-      cycleLabel: `Days ${index * 7 + 1}-${index * 7 + 7}`,
+      cycleLabel: `Days ${index * 8 + 1}-${index * 8 + 8}`,
       areas: [...new Set(days.map((day) => day.area))],
       days,
     };
@@ -279,7 +279,7 @@ function renderWeeks() {
 
     weekEl.dataset.week = String(week.weekNumber);
     fragment.querySelector("[data-cycle]").textContent = week.cycleLabel;
-    fragment.querySelector("[data-title]").textContent = `Week ${week.weekNumber}`;
+    fragment.querySelector("[data-title]").textContent = `Cycle ${week.weekNumber}`;
     fragment.querySelector("[data-areas]").textContent = week.areas.join(" + ");
 
     week.days.forEach((day, dayIndex) => {
@@ -366,7 +366,7 @@ function updateWeekCount(fragment, weekNumber) {
   const completed = week.days.filter((day, index) => {
     return state.completed[itemId(weekNumber, index)];
   }).length;
-  fragment.querySelector("[data-week-count]").textContent = `${completed}/7`;
+  fragment.querySelector("[data-week-count]").textContent = `${completed}/8`;
 }
 
 function shouldShowWeek(week) {
@@ -387,22 +387,22 @@ function getCurrentWeekNumber() {
       return !state.completed[itemId(week.weekNumber, index)];
     });
   });
-  return firstIncomplete?.weekNumber || 12;
+  return firstIncomplete?.weekNumber || 6;
 }
 
 function itemId(weekNumber, dayIndex) {
-  return `daily-week-${weekNumber}-day-${dayIndex}`;
+  return `daily48-cycle-${weekNumber}-day-${dayIndex}`;
 }
 
 function weekNoteId(weekNumber) {
-  return `week-${weekNumber}-notes`;
+  return `daily48-cycle-${weekNumber}-notes`;
 }
 
 function renderWeekJump() {
   plan.forEach((week) => {
     const option = document.createElement("option");
     option.value = String(week.weekNumber);
-    option.textContent = `Week ${week.weekNumber}`;
+    option.textContent = `Cycle ${week.weekNumber}`;
     weekJump.append(option);
   });
 }
