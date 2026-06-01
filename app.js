@@ -1,4 +1,10 @@
-const STORAGE_KEY = "beginnerFlexibilityTracker.daily48.v1";
+const STORAGE_KEY = "beginnerFlexibilityTracker.daily56.v1";
+const LEGACY_STORAGE_KEYS = [
+  "beginnerFlexibilityTracker.daily48.v1",
+  "beginnerFlexibilityTracker.daily.v1",
+];
+const PLAN_DAYS = 56;
+const CYCLE_LENGTH = 8;
 const CLOUD_CONFIG = window.FLEX_TRACKER_CONFIG || {};
 const CLOUD_URL = (CLOUD_CONFIG.GOOGLE_APPS_SCRIPT_URL || "").trim();
 const CLOUD_TOKEN = CLOUD_CONFIG.SYNC_TOKEN || "";
@@ -66,7 +72,7 @@ resetProgress.addEventListener("click", () => {
 });
 
 function buildPlan() {
-  return Array.from({ length: 6 }, (_, index) => {
+  return Array.from({ length: PLAN_DAYS / CYCLE_LENGTH }, (_, index) => {
     const weekNumber = index + 1;
     const days = Array.from({ length: 8 }, (__, dayIndex) => {
       const planDayIndex = index * 8 + dayIndex;
@@ -100,7 +106,15 @@ function defaultState() {
 
 function loadState() {
   try {
-    return { ...defaultState(), ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
+    const savedState = localStorage.getItem(STORAGE_KEY);
+    if (savedState) return normalizeState(JSON.parse(savedState));
+
+    for (const legacyKey of LEGACY_STORAGE_KEYS) {
+      const legacyState = localStorage.getItem(legacyKey);
+      if (legacyState) return normalizeState(JSON.parse(legacyState));
+    }
+
+    return defaultState();
   } catch {
     return defaultState();
   }
@@ -149,6 +163,7 @@ function loadCloudState({ force = false } = {}) {
     }
 
     const cloudState = normalizeState(response.state);
+    const shouldPersistMigration = hasLegacyIds(response.state);
     const localTime = Date.parse(state.updatedAt || "0") || 0;
     const cloudTime = Date.parse(cloudState.updatedAt || response.updatedAt || "0") || 0;
 
@@ -159,7 +174,14 @@ function loadCloudState({ force = false } = {}) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       render();
       isHydratingFromCloud = false;
-      updateSyncStatus("Loaded progress from Google Sheets.");
+      if (shouldPersistMigration) {
+        state.updatedAt = new Date().toISOString();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        saveCloudState();
+        updateSyncStatus("Migrated progress from Google Sheets to the 56-day plan.");
+      } else {
+        updateSyncStatus("Loaded progress from Google Sheets.");
+      }
     } else {
       updateSyncStatus("Local progress is current. Future changes will sync to Google Sheets.");
       saveCloudState();
@@ -215,10 +237,104 @@ function appendHiddenField(form, name, value) {
 }
 
 function normalizeState(value) {
-  return {
+  const normalized = {
     ...defaultState(),
     ...(value && typeof value === "object" ? value : {}),
   };
+  return migrateState(normalized);
+}
+
+function migrateState(value) {
+  const migrated = {
+    ...defaultState(),
+    ...value,
+    completed: {},
+    notes: {},
+  };
+
+  Object.entries(value.completed || {}).forEach(([id, checked]) => {
+    const migratedId = migrateItemId(id);
+    if (migratedId) migrated.completed[migratedId] = checked;
+  });
+
+  Object.entries(value.notes || {}).forEach(([id, note]) => {
+    const migratedId = migrateNoteId(id);
+    if (migratedId) migrated.notes[migratedId] = note;
+  });
+
+  return migrated;
+}
+
+function hasLegacyIds(value) {
+  const completedIds = Object.keys(value?.completed || {});
+  const noteIds = Object.keys(value?.notes || {});
+  return [...completedIds, ...noteIds].some((id) => {
+    return id.startsWith("daily48-cycle-") || id.startsWith("daily-week-") || /^week-\d+-(day-\d+|notes)$/.test(id);
+  });
+}
+
+function migrateItemId(id) {
+  const currentMatch = id.match(/^daily56-cycle-(\d+)-day-(\d+)$/);
+  if (currentMatch) {
+    const cycleNumber = Number(currentMatch[1]);
+    const dayIndex = Number(currentMatch[2]);
+    return isValidCycleDay(cycleNumber, dayIndex) ? id : null;
+  }
+
+  const legacy48Match = id.match(/^daily48-cycle-(\d+)-day-(\d+)$/);
+  if (legacy48Match) {
+    const cycleNumber = Number(legacy48Match[1]);
+    const dayIndex = Number(legacy48Match[2]);
+    return isValidCycleDay(cycleNumber, dayIndex) ? itemId(cycleNumber, dayIndex) : null;
+  }
+
+  const legacyDailyMatch = id.match(/^daily-week-(\d+)-day-(\d+)$/);
+  if (legacyDailyMatch) {
+    return migrateGlobalDay(Number(legacyDailyMatch[1]), Number(legacyDailyMatch[2]), 7);
+  }
+
+  const legacyWeeklyMatch = id.match(/^week-(\d+)-day-(\d+)$/);
+  if (legacyWeeklyMatch) {
+    return migrateGlobalDay(Number(legacyWeeklyMatch[1]), Number(legacyWeeklyMatch[2]), 7);
+  }
+
+  return null;
+}
+
+function migrateNoteId(id) {
+  const currentMatch = id.match(/^daily56-cycle-(\d+)-notes$/);
+  if (currentMatch) {
+    const cycleNumber = Number(currentMatch[1]);
+    return cycleNumber >= 1 && cycleNumber <= PLAN_DAYS / CYCLE_LENGTH ? id : null;
+  }
+
+  const legacy48Match = id.match(/^daily48-cycle-(\d+)-notes$/);
+  if (legacy48Match) {
+    const cycleNumber = Number(legacy48Match[1]);
+    return cycleNumber >= 1 && cycleNumber <= PLAN_DAYS / CYCLE_LENGTH ? weekNoteId(cycleNumber) : null;
+  }
+
+  const legacyMatch = id.match(/^week-(\d+)-notes$/);
+  if (legacyMatch) {
+    const zeroBasedDay = (Number(legacyMatch[1]) - 1) * 7;
+    if (zeroBasedDay < 0 || zeroBasedDay >= PLAN_DAYS) return null;
+    return weekNoteId(Math.floor(zeroBasedDay / CYCLE_LENGTH) + 1);
+  }
+
+  return null;
+}
+
+function migrateGlobalDay(groupNumber, dayIndex, daysPerGroup) {
+  const zeroBasedDay = (groupNumber - 1) * daysPerGroup + dayIndex;
+  if (zeroBasedDay < 0 || zeroBasedDay >= PLAN_DAYS) return null;
+
+  const cycleNumber = Math.floor(zeroBasedDay / CYCLE_LENGTH) + 1;
+  const cycleDayIndex = zeroBasedDay % CYCLE_LENGTH;
+  return itemId(cycleNumber, cycleDayIndex);
+}
+
+function isValidCycleDay(cycleNumber, dayIndex) {
+  return cycleNumber >= 1 && cycleNumber <= PLAN_DAYS / CYCLE_LENGTH && dayIndex >= 0 && dayIndex < CYCLE_LENGTH;
 }
 
 function updateSyncStatus(message) {
@@ -391,11 +507,11 @@ function getCurrentWeekNumber() {
 }
 
 function itemId(weekNumber, dayIndex) {
-  return `daily48-cycle-${weekNumber}-day-${dayIndex}`;
+  return `daily56-cycle-${weekNumber}-day-${dayIndex}`;
 }
 
 function weekNoteId(weekNumber) {
-  return `daily48-cycle-${weekNumber}-notes`;
+  return `daily56-cycle-${weekNumber}-notes`;
 }
 
 function renderWeekJump() {
