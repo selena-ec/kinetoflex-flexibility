@@ -6,7 +6,7 @@ This tracker can save progress to Google Sheets through a small Google Apps Scri
 
 - GitHub Pages hosts the static tracker files.
 - Google Apps Script Web App acts as the API.
-- Google Sheets stores the tracker state in your Google account.
+- Google Sheets stores workout progress and cycle notes as row-based records in your Google account.
 - Browser `localStorage` remains a local fallback.
 
 When your phone and laptop both open the same hosted URL and use the same Apps Script endpoint, they load and save to the same Google Sheet.
@@ -49,9 +49,11 @@ If you set `TOKEN` in Apps Script, set the same value as `SYNC_TOKEN`.
 ## How Sync Works
 
 - The page always saves to browser `localStorage`.
-- If `GOOGLE_APPS_SCRIPT_URL` is configured, it also saves the same tracker state to Google Sheets.
+- If `GOOGLE_APPS_SCRIPT_URL` is configured, changed workouts and notes are saved to Google Sheets.
 - On load, the page compares local and cloud timestamps and uses the newest state.
-- The Sheet stores the tracker state as JSON in the `TrackerState` tab.
+- Workout progress is stored in a `WorkoutProgress` tab.
+- Cycle notes are stored in a `CycleNotes` tab.
+- If an old `TrackerState` tab exists, the script can still read it and the page will migrate matching progress into the row-based format.
 
 ## Important Notes
 

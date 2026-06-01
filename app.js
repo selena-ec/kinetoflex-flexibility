@@ -43,6 +43,9 @@ const syncStatus = document.querySelector("#syncStatus");
 const syncNow = document.querySelector("#syncNow");
 let saveTimer = null;
 let isHydratingFromCloud = false;
+let dirtyWorkoutIds = new Set();
+let dirtyCycleNoteIds = new Set();
+let needsFullCloudSave = false;
 
 renderWeekJump();
 render();
@@ -57,6 +60,7 @@ weekJump.addEventListener("change", () => {
 viewFilter.addEventListener("change", render);
 
 syncNow.addEventListener("click", () => {
+  window.clearTimeout(saveTimer);
   loadCloudState({ force: true });
 });
 
@@ -67,6 +71,9 @@ resetProgress.addEventListener("click", () => {
   Object.keys(state).forEach((key) => delete state[key]);
   Object.assign(state, defaultState());
   state.updatedAt = new Date().toISOString();
+  needsFullCloudSave = true;
+  dirtyWorkoutIds = new Set(plan.flatMap((week) => week.days.map((day, index) => itemId(week.weekNumber, index))));
+  dirtyCycleNoteIds = new Set(plan.map((week) => weekNoteId(week.weekNumber)));
   saveState();
   render();
 });
@@ -120,7 +127,9 @@ function loadState() {
   }
 }
 
-function saveState() {
+function saveState({ workoutId = "", cycleNoteId = "" } = {}) {
+  if (workoutId) dirtyWorkoutIds.add(workoutId);
+  if (cycleNoteId) dirtyCycleNoteIds.add(cycleNoteId);
   state.updatedAt = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   scheduleCloudSave();
@@ -167,7 +176,7 @@ function loadCloudState({ force = false } = {}) {
     const localTime = Date.parse(state.updatedAt || "0") || 0;
     const cloudTime = Date.parse(cloudState.updatedAt || response.updatedAt || "0") || 0;
 
-    if (cloudTime > localTime || force) {
+    if (cloudTime > localTime) {
       isHydratingFromCloud = true;
       Object.keys(state).forEach((key) => delete state[key]);
       Object.assign(state, cloudState, { updatedAt: cloudState.updatedAt || response.updatedAt || "" });
@@ -177,13 +186,15 @@ function loadCloudState({ force = false } = {}) {
       if (shouldPersistMigration) {
         state.updatedAt = new Date().toISOString();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        needsFullCloudSave = true;
         saveCloudState();
         updateSyncStatus("Migrated progress from Google Sheets to the 56-day plan.");
       } else {
         updateSyncStatus("Loaded progress from Google Sheets.");
       }
     } else {
-      updateSyncStatus("Local progress is current. Future changes will sync to Google Sheets.");
+      updateSyncStatus(force ? "Local progress is newer. Saving it to Google Sheets..." : "Local progress is current. Future changes will sync to Google Sheets.");
+      needsFullCloudSave = true;
       saveCloudState();
     }
   };
@@ -216,7 +227,7 @@ function saveCloudState() {
   form.target = iframeName;
   form.hidden = true;
 
-  appendHiddenField(form, "payload", JSON.stringify({ state, updatedAt: state.updatedAt }));
+  appendHiddenField(form, "payload", JSON.stringify(buildCloudPayload()));
   if (CLOUD_TOKEN) appendHiddenField(form, "token", CLOUD_TOKEN);
 
   document.body.append(form);
@@ -226,6 +237,76 @@ function saveCloudState() {
   window.setTimeout(() => {
     updateSyncStatus(`Saved to Google Sheets at ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}.`);
   }, 800);
+}
+
+function buildCloudPayload() {
+  const full = needsFullCloudSave || (!dirtyWorkoutIds.size && !dirtyCycleNoteIds.size);
+  const workoutIds = full ? getAllWorkoutIds() : [...dirtyWorkoutIds];
+  const cycleNoteIds = full ? getAllCycleNoteIds() : [...dirtyCycleNoteIds];
+  const payload = {
+    planVersion: "beginner-8week-v1",
+    updatedAt: state.updatedAt,
+    records: {
+      workouts: workoutIds.map((id) => workoutRecord(id)),
+      cycleNotes: cycleNoteIds.map((id) => cycleNoteRecord(id)),
+    },
+  };
+
+  dirtyWorkoutIds.clear();
+  dirtyCycleNoteIds.clear();
+  needsFullCloudSave = false;
+  return payload;
+}
+
+function getAllWorkoutIds() {
+  return plan.flatMap((week) => week.days.map((day, index) => itemId(week.weekNumber, index)));
+}
+
+function getAllCycleNoteIds() {
+  return plan.map((week) => weekNoteId(week.weekNumber));
+}
+
+function workoutRecord(id) {
+  const day = dayFromItemId(id);
+  return {
+    id,
+    planVersion: "beginner-8week-v1",
+    cycle: day?.cycleNumber || "",
+    day: day ? day.dayIndex + 1 : "",
+    title: day?.workout.title || "",
+    area: day?.workout.area || "",
+    workoutNumber: day?.workout.workoutNumber || "",
+    completed: Boolean(state.completed[id]),
+    sessionNote: state.notes[id]?.session || "",
+    updatedAt: state.updatedAt,
+  };
+}
+
+function cycleNoteRecord(id) {
+  const cycleNumber = Number(id.match(/^daily56-cycle-(\d+)-notes$/)?.[1] || "");
+  const notes = state.notes[id] || {};
+  return {
+    id,
+    planVersion: "beginner-8week-v1",
+    cycle: cycleNumber || "",
+    energy: notes.energy || "",
+    soreness: notes.soreness || "",
+    best: notes.best || "",
+    restricted: notes.restricted || "",
+    range: notes.range || "",
+    updatedAt: state.updatedAt,
+  };
+}
+
+function dayFromItemId(id) {
+  const match = id.match(/^daily56-cycle-(\d+)-day-(\d+)$/);
+  if (!match) return null;
+  const cycleNumber = Number(match[1]);
+  const dayIndex = Number(match[2]);
+  const week = plan[cycleNumber - 1];
+  const workout = week?.days[dayIndex];
+  if (!workout) return null;
+  return { cycleNumber, dayIndex, workout };
 }
 
 function appendHiddenField(form, name, value) {
@@ -425,7 +506,7 @@ function renderDay(weekNumber, dayIndex, day) {
   checkbox.checked = Boolean(state.completed[id]);
   checkbox.addEventListener("change", () => {
     state.completed[id] = checkbox.checked;
-    saveState();
+    saveState({ workoutId: id });
     render();
   });
 
@@ -458,7 +539,7 @@ function renderSessionNote(id) {
   input.value = state.notes[id]?.session || "";
   input.addEventListener("input", () => {
     state.notes[id] = { ...(state.notes[id] || {}), session: input.value };
-    saveState();
+    saveState({ workoutId: id });
   });
 
   wrapper.append(input);
@@ -472,7 +553,7 @@ function hydrateWeekNotes(fragment, weekNumber) {
     field.value = state.notes[id]?.[key] || "";
     field.addEventListener("input", () => {
       state.notes[id] = { ...(state.notes[id] || {}), [key]: field.value };
-      saveState();
+      saveState({ cycleNoteId: id });
     });
   });
 }
@@ -503,7 +584,7 @@ function getCurrentWeekNumber() {
       return !state.completed[itemId(week.weekNumber, index)];
     });
   });
-  return firstIncomplete?.weekNumber || 6;
+  return firstIncomplete?.weekNumber || PLAN_DAYS / CYCLE_LENGTH;
 }
 
 function itemId(weekNumber, dayIndex) {
