@@ -473,11 +473,16 @@ function renderWeeks() {
     const fragment = weekTemplate.content.cloneNode(true);
     const weekEl = fragment.querySelector("[data-week]");
     const daysEl = fragment.querySelector("[data-days]");
+    const workoutPanel = fragment.querySelector("[data-workout-panel]");
+    const workoutSummary = fragment.querySelector("[data-workout-summary]");
+    const completed = completedCount(week.weekNumber);
 
     weekEl.dataset.week = String(week.weekNumber);
     fragment.querySelector("[data-cycle]").textContent = week.cycleLabel;
     fragment.querySelector("[data-title]").textContent = `Cycle ${week.weekNumber}`;
     fragment.querySelector("[data-areas]").textContent = week.areas.join(" + ");
+    workoutSummary.textContent = completed === CYCLE_LENGTH ? "Workouts complete" : "Daily workouts";
+    workoutPanel.open = completed !== CYCLE_LENGTH;
 
     week.days.forEach((day, dayIndex) => {
       daysEl.append(renderDay(week.weekNumber, dayIndex, day));
@@ -559,11 +564,14 @@ function hydrateWeekNotes(fragment, weekNumber) {
 }
 
 function updateWeekCount(fragment, weekNumber) {
+  fragment.querySelector("[data-week-count]").textContent = `${completedCount(weekNumber)}/8`;
+}
+
+function completedCount(weekNumber) {
   const week = plan[weekNumber - 1];
-  const completed = week.days.filter((day, index) => {
+  return week.days.filter((day, index) => {
     return state.completed[itemId(weekNumber, index)];
   }).length;
-  fragment.querySelector("[data-week-count]").textContent = `${completed}/8`;
 }
 
 function shouldShowWeek(week) {
