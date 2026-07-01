@@ -11,8 +11,10 @@ https://selena-ec.github.io/ballet-kinetoflex-flexibility/
 ## Plan
 
 - 8 weeks
-- 56 daily workouts
-- 7 complete 8-day cycles
+- 64 tracked flexibility exercises
+- 8 weekly Sun-Sat plans
+- 4 flexibility workout days per week
+- 3 open days per week for other training
 - 4 focus areas: Hip Mobility, Front Split, Middle Split, Pancake
 - Google Sheets sync support through Apps Script
 

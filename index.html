@@ -23,12 +23,12 @@
           <h2 id="summaryTitle">8-week rolling plan</h2>
           <p>
             Track the beginner Hip Mobility, Front Split, Middle Split, and Pancake workouts.
-            Train every day for seven complete 8-day cycles.
+            Train flexibility four days each week, with two exercises on each workout day.
           </p>
         </div>
         <div class="total-progress" aria-label="Total completed workouts">
           <span id="totalCompleted">0</span>
-          <span>of 56 workouts complete</span>
+          <span>of 64 workouts complete</span>
         </div>
       </section>
 
@@ -44,15 +44,15 @@
 
       <section class="controls" aria-label="Tracker controls">
         <label>
-          Jump to cycle
+          Jump to week
           <select id="weekJump"></select>
         </label>
         <label>
           View
           <select id="viewFilter">
-            <option value="all">All cycles</option>
-            <option value="current">Current cycle</option>
-            <option value="incomplete">Incomplete cycles</option>
+            <option value="all">All weeks</option>
+            <option value="current">Current week</option>
+            <option value="incomplete">Incomplete weeks</option>
           </select>
         </label>
       </section>
@@ -68,19 +68,19 @@
             <h2 data-title></h2>
             <p data-areas></p>
           </div>
-          <div class="week-progress" aria-label="Cycle progress">
+          <div class="week-progress" aria-label="Week progress">
             <span data-week-count>0/8</span>
             <span>complete</span>
           </div>
         </div>
 
         <details class="workout-panel" data-workout-panel open>
-          <summary data-workout-summary>Daily workouts</summary>
+          <summary data-workout-summary>Weekly workouts</summary>
           <div class="day-list" data-days></div>
         </details>
 
         <details class="notes-panel">
-          <summary>Cycle notes</summary>
+          <summary>Week notes</summary>
           <div class="notes-grid">
             <label>
               Energy

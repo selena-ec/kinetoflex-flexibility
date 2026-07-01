@@ -324,6 +324,11 @@ textarea {
   background: #fbfdfb;
 }
 
+.day-card.open-day {
+  min-height: 128px;
+  background: var(--rest-soft);
+}
+
 .day-card.rest {
   background: var(--rest-soft);
 }
@@ -371,6 +376,18 @@ textarea {
   min-height: 20px;
   margin: 2px 0 0;
   accent-color: var(--green);
+}
+
+.open-day-title {
+  margin-top: 12px;
+  color: var(--rest);
+  font-size: 1rem;
+}
+
+.workout-block + .workout-block {
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
 }
 
 .area-pill {

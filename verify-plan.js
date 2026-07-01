@@ -1,12 +1,23 @@
-const cycle = [
-  ["Hip Mobility", 1],
-  ["Front Split", 1],
-  ["Middle Split", 1],
-  ["Pancake", 1],
-  ["Hip Mobility", 2],
-  ["Front Split", 2],
-  ["Middle Split", 2],
-  ["Pancake", 2],
+const weeklyTemplate = [
+  [
+    ["Hip Mobility", 1],
+    ["Front Split", 1],
+  ],
+  [],
+  [
+    ["Middle Split", 1],
+    ["Pancake", 1],
+  ],
+  [],
+  [
+    ["Hip Mobility", 2],
+    ["Front Split", 2],
+  ],
+  [],
+  [
+    ["Middle Split", 2],
+    ["Pancake", 2],
+  ],
 ];
 
 const counts = {
@@ -23,31 +34,37 @@ const workoutCounts = {
   Pancake: { 1: 0, 2: 0 },
 };
 
-const cycleCoverage = new Set(cycle.map(([area]) => area));
-assertEqual(cycle.length, 8, "cycle length");
-assertEqual(cycleCoverage.size, 4, "areas per cycle");
+let workoutSlots = 0;
+let openDays = 0;
 
-for (let day = 0; day < 56; day += 1) {
-  const [area, workoutNumber] = cycle[day % cycle.length];
-  counts[area] += 1;
-  workoutCounts[area][workoutNumber] += 1;
+for (let week = 0; week < 8; week += 1) {
+  weeklyTemplate.forEach((day) => {
+    if (!day.length) openDays += 1;
+
+    day.forEach(([area, workoutNumber]) => {
+      workoutSlots += 1;
+      counts[area] += 1;
+      workoutCounts[area][workoutNumber] += 1;
+    });
+  });
 }
 
+assertEqual(workoutSlots, 64, "workout slots");
+assertEqual(openDays, 24, "open days");
+
 for (const area of Object.keys(counts)) {
-  assertEqual(counts[area], 14, `${area} sessions`);
+  assertEqual(counts[area], 16, `${area} sessions`);
 }
 
 for (const area of Object.keys(workoutCounts)) {
-  assertEqual(workoutCounts[area][1], 7, `${area} workout 1 sessions`);
-  assertEqual(workoutCounts[area][2], 7, `${area} workout 2 sessions`);
+  assertEqual(workoutCounts[area][1], 8, `${area} workout 1 sessions`);
+  assertEqual(workoutCounts[area][2], 8, `${area} workout 2 sessions`);
 }
 
-assertEqual(Object.values(counts).reduce((sum, count) => sum + count, 0), 56, "workout slots");
-
 console.log("Plan verification passed:", {
-  totalSlots: 56,
-  workoutSlots: 56,
-  restSlots: 0,
+  weeks: 8,
+  workoutSlots,
+  openDays,
   counts,
   workoutCounts,
 });

@@ -9,7 +9,7 @@ This is an 8-week Beginner-level flexibility plan based on the four areas in The
 - Middle Split
 - Pancake
 
-The plan covers 56 calendar days. It uses a repeating 8-day cycle with one workout every day. The full plan contains seven complete 8-day cycles, so every area is trained evenly.
+The plan is organized by week, Sunday through Saturday. Each week includes 8 flexibility exercises across 4 workout days, with 2 exercises on each workout day. The other 3 days are left open for another program.
 
 Follow-along videos count as alternate formats for the same workout. They are not separate sessions.
 
@@ -26,56 +26,34 @@ Use only these 8 sessions:
 - Pancake Beginner - Workout 1
 - Pancake Beginner - Workout 2
 
-## Eight-Day Rolling Cycle
+## Weekly Layout
 
-| Cycle Day | Session |
+| Day | Sessions |
 |---|---|
-| Day 1 | Hip Mobility Beginner - Workout 1 |
-| Day 2 | Front Split Beginner - Workout 1 |
-| Day 3 | Middle Split Beginner - Workout 1 |
-| Day 4 | Pancake Beginner - Workout 1 |
-| Day 5 | Hip Mobility Beginner - Workout 2 |
-| Day 6 | Front Split Beginner - Workout 2 |
-| Day 7 | Middle Split Beginner - Workout 2 |
-| Day 8 | Pancake Beginner - Workout 2 |
-
-Every 8 days, all four areas are trained twice.
+| Sun | Hip Mobility Beginner - Workout 1; Front Split Beginner - Workout 1 |
+| Mon | Open day |
+| Tue | Middle Split Beginner - Workout 1; Pancake Beginner - Workout 1 |
+| Wed | Open day |
+| Thu | Hip Mobility Beginner - Workout 2; Front Split Beginner - Workout 2 |
+| Fri | Open day |
+| Sat | Middle Split Beginner - Workout 2; Pancake Beginner - Workout 2 |
 
 ## 8-Week Volume
 
-The tracker covers 56 calendar days, which is 7 full 8-day cycles.
+The tracker covers 8 weeks. Each week has 8 exercises, for 64 total tracked flexibility exercises.
 
 | Area | Sessions Per 8 Weeks |
 |---|---:|
-| Hip Mobility | 14 |
-| Front Split | 14 |
-| Middle Split | 14 |
-| Pancake | 14 |
+| Hip Mobility | 16 |
+| Front Split | 16 |
+| Middle Split | 16 |
+| Pancake | 16 |
 
-Each area includes 7 sessions of Workout 1 and 7 sessions of Workout 2.
+Each area includes 8 sessions of Workout 1 and 8 sessions of Workout 2.
 
-## Cycle Display
+## Week Notes
 
-The app groups the plan into seven cycles. Each cycle contains the same 8-day sequence.
-
-### Cycle 1
-
-| Day Slot | Session |
-|---|---|
-| Day 1 | Hip Mobility Beginner - Workout 1 |
-| Day 2 | Front Split Beginner - Workout 1 |
-| Day 3 | Middle Split Beginner - Workout 1 |
-| Day 4 | Pancake Beginner - Workout 1 |
-| Day 5 | Hip Mobility Beginner - Workout 2 |
-| Day 6 | Front Split Beginner - Workout 2 |
-| Day 7 | Middle Split Beginner - Workout 2 |
-| Day 8 | Pancake Beginner - Workout 2 |
-
-Cycles 2-7 repeat the same 8-day sequence.
-
-## Cycle Notes
-
-At the end of each cycle, briefly record:
+At the end of each week, briefly record:
 
 - Energy level
 - Soreness level
@@ -86,4 +64,4 @@ At the end of each cycle, briefly record:
 
 ## Progress Rule
 
-Stay at Beginner for the full 8-week plan unless the workouts feel controlled, pain-free, and repeatable. If one area progresses faster than the others, upgrade only that area after the cycle rather than changing everything at once.
+Stay at Beginner for the full 8-week plan unless the workouts feel controlled, pain-free, and repeatable. If one area progresses faster than the others, upgrade only that area after the 8-week plan rather than changing everything at once.
