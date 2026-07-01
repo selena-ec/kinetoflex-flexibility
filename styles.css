@@ -57,7 +57,7 @@ textarea {
 }
 
 .eyebrow,
-.cycle-label {
+.week-label {
   margin: 0 0 6px;
   color: inherit;
   font-size: 0.78rem;
@@ -283,7 +283,7 @@ textarea {
   color: var(--muted);
 }
 
-.cycle-label {
+.week-label {
   color: var(--blue);
 }
 
@@ -329,15 +329,6 @@ textarea {
   background: var(--rest-soft);
 }
 
-.day-card.rest {
-  background: var(--rest-soft);
-}
-
-.day-card.rest .day-topline {
-  display: grid;
-  gap: 8px;
-}
-
 .day-topline {
   display: flex;
   align-items: center;
@@ -351,13 +342,6 @@ textarea {
   font-size: 0.8rem;
   font-weight: 800;
   text-transform: uppercase;
-}
-
-.rest-picker {
-  width: 100%;
-  min-height: 32px;
-  padding: 0 8px;
-  font-size: 0.78rem;
 }
 
 .check-row {
@@ -420,15 +404,6 @@ textarea {
   color: var(--amber);
 }
 
-.rest-pill {
-  background: #fff;
-  color: var(--rest);
-}
-
-.day-card.rest .rest-pill {
-  align-self: end;
-}
-
 .workout-meta {
   margin-top: 8px;
   color: var(--muted);
@@ -469,10 +444,6 @@ textarea {
 
 .wide-note {
   margin-top: 12px;
-}
-
-.hidden {
-  display: none;
 }
 
 @media (max-width: 980px) {

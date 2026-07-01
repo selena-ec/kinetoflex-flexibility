@@ -44,7 +44,7 @@ const syncNow = document.querySelector("#syncNow");
 let saveTimer = null;
 let isHydratingFromCloud = false;
 let dirtyWorkoutIds = new Set();
-let dirtyCycleNoteIds = new Set();
+let dirtyWeekNoteIds = new Set();
 let needsFullCloudSave = false;
 
 renderWeekJump();
@@ -73,7 +73,7 @@ resetProgress.addEventListener("click", () => {
   state.updatedAt = new Date().toISOString();
   needsFullCloudSave = true;
   dirtyWorkoutIds = new Set(getAllWorkoutIds());
-  dirtyCycleNoteIds = new Set(plan.map((week) => weekNoteId(week.weekNumber)));
+  dirtyWeekNoteIds = new Set(plan.map((week) => weekNoteId(week.weekNumber)));
   saveState();
   render();
 });
@@ -88,7 +88,7 @@ function buildPlan() {
 
     return {
       weekNumber,
-      cycleLabel: "Sun-Sat",
+      weekLabel: "Sun-Sat",
       areas: ["Sun", "Tue", "Thu", "Sat"],
       days,
     };
@@ -131,9 +131,9 @@ function loadState() {
   }
 }
 
-function saveState({ workoutId = "", cycleNoteId = "" } = {}) {
+function saveState({ workoutId = "", weekNotesId = "" } = {}) {
   if (workoutId) dirtyWorkoutIds.add(workoutId);
-  if (cycleNoteId) dirtyCycleNoteIds.add(cycleNoteId);
+  if (weekNotesId) dirtyWeekNoteIds.add(weekNotesId);
   state.updatedAt = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   scheduleCloudSave();
@@ -244,20 +244,20 @@ function saveCloudState() {
 }
 
 function buildCloudPayload() {
-  const full = needsFullCloudSave || (!dirtyWorkoutIds.size && !dirtyCycleNoteIds.size);
+  const full = needsFullCloudSave || (!dirtyWorkoutIds.size && !dirtyWeekNoteIds.size);
   const workoutIds = full ? getAllWorkoutIds() : [...dirtyWorkoutIds];
-  const cycleNoteIds = full ? getAllCycleNoteIds() : [...dirtyCycleNoteIds];
+  const weekNoteIds = full ? getAllWeekNoteIds() : [...dirtyWeekNoteIds];
   const payload = {
     planVersion: "beginner-8week-weekly-v1",
     updatedAt: state.updatedAt,
     records: {
       workouts: workoutIds.map((id) => workoutRecord(id)),
-      cycleNotes: cycleNoteIds.map((id) => cycleNoteRecord(id)),
+      cycleNotes: weekNoteIds.map((id) => weekNoteRecord(id)),
     },
   };
 
   dirtyWorkoutIds.clear();
-  dirtyCycleNoteIds.clear();
+  dirtyWeekNoteIds.clear();
   needsFullCloudSave = false;
   return payload;
 }
@@ -270,7 +270,7 @@ function getAllWorkoutIds() {
   });
 }
 
-function getAllCycleNoteIds() {
+function getAllWeekNoteIds() {
   return plan.map((week) => weekNoteId(week.weekNumber));
 }
 
@@ -290,7 +290,7 @@ function workoutRecord(id) {
   };
 }
 
-function cycleNoteRecord(id) {
+function weekNoteRecord(id) {
   const weekNumber = Number(id.match(/^weekly8-week-(\d+)-notes$/)?.[1] || "");
   const notes = state.notes[id] || {};
   return {
@@ -509,7 +509,7 @@ function renderWeeks() {
     const completed = completedCount(week.weekNumber);
 
     weekEl.dataset.week = String(week.weekNumber);
-    fragment.querySelector("[data-cycle]").textContent = week.cycleLabel;
+    fragment.querySelector("[data-week-label]").textContent = week.weekLabel;
     fragment.querySelector("[data-title]").textContent = `Week ${week.weekNumber}`;
     fragment.querySelector("[data-areas]").textContent = `${week.areas.join(" + ")} workout days`;
     workoutSummary.textContent = completed === WORKOUTS_PER_WEEK ? "Week workouts complete" : "Weekly workouts";
@@ -615,7 +615,7 @@ function hydrateWeekNotes(fragment, weekNumber) {
     field.value = state.notes[id]?.[key] || "";
     field.addEventListener("input", () => {
       state.notes[id] = { ...(state.notes[id] || {}), [key]: field.value };
-      saveState({ cycleNoteId: id });
+      saveState({ weekNotesId: id });
     });
   });
 }
