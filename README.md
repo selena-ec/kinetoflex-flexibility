@@ -6,7 +6,7 @@ Intermediate flexibility tracker for a 4-week Kinetoflex ballet support plan.
 
 Open the live app here:
 
-https://selena-ec.github.io/ballet-kinetoflex-flexibility/
+https://selena-ec.github.io/kinetoflex-flexibility/
 
 ## Plan
 
