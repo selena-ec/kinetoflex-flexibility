@@ -14,7 +14,7 @@ When your phone and laptop both open the same hosted URL and use the same Apps S
 ## 1. Create the Google Sheet
 
 1. Create a new Google Sheet.
-2. Name it something like `Beginner Flexibility Tracker Data`.
+2. Name it something like `Intermediate Flexibility Tracker Data`.
 3. In the Sheet, go to `Extensions` -> `Apps Script`.
 
 ## 2. Add the Apps Script

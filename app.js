@@ -1,11 +1,7 @@
-const STORAGE_KEY = "beginnerFlexibilityTracker.weekly8.v1";
-const LEGACY_STORAGE_KEYS = [
-  "beginnerFlexibilityTracker.daily56.v1",
-  "beginnerFlexibilityTracker.daily48.v1",
-  "beginnerFlexibilityTracker.daily.v1",
-];
-const PLAN_WEEKS = 8;
-const WORKOUTS_PER_WEEK = 8;
+const PLAN_LEVEL = "Intermediate";
+const PLAN_VERSION = "intermediate-4week-daily-v1";
+const STORAGE_KEY = "intermediateFlexibilityTracker.weekly4.v1";
+const PLAN_WEEKS = 4;
 const CLOUD_CONFIG = window.FLEX_TRACKER_CONFIG || {};
 const CLOUD_URL = (CLOUD_CONFIG.GOOGLE_APPS_SCRIPT_URL || "").trim();
 const CLOUD_TOKEN = CLOUD_CONFIG.SYNC_TOKEN || "";
@@ -13,14 +9,16 @@ const CLOUD_ENABLED = Boolean(CLOUD_URL);
 const SAVE_DEBOUNCE_MS = 700;
 
 const weeklyTemplate = [
-  dayPlan("Sun", [sessionDay("Hip Mobility", 1), sessionDay("Front Split", 1)]),
-  dayPlan("Mon", []),
-  dayPlan("Tue", [sessionDay("Middle Split", 1), sessionDay("Pancake", 1)]),
-  dayPlan("Wed", []),
-  dayPlan("Thu", [sessionDay("Hip Mobility", 2), sessionDay("Front Split", 2)]),
-  dayPlan("Fri", []),
-  dayPlan("Sat", [sessionDay("Middle Split", 2), sessionDay("Pancake", 2)]),
+  dayPlan("Sun", [sessionDay("Hip Mobility", 1)]),
+  dayPlan("Mon", [sessionDay("Front Split", 1)]),
+  dayPlan("Tue", [sessionDay("Middle Split", 1)]),
+  dayPlan("Wed", [sessionDay("Pancake", 1)]),
+  dayPlan("Thu", [sessionDay("Hip Mobility", 2)]),
+  dayPlan("Fri", [sessionDay("Front Split", 2), sessionDay("Middle Split", 2)]),
+  dayPlan("Sat", [sessionDay("Pancake", 2)]),
 ];
+
+const WORKOUTS_PER_WEEK = weeklyTemplate.reduce((total, day) => total + day.workouts.length, 0);
 
 const areaClass = {
   "Hip Mobility": "hip",
@@ -36,6 +34,7 @@ const weeksEl = document.querySelector("#weeks");
 const weekTemplate = document.querySelector("#weekTemplate");
 const progressGrid = document.querySelector("#progressGrid");
 const totalCompletedEl = document.querySelector("#totalCompleted");
+const totalPlannedEl = document.querySelector("#totalPlanned");
 const weekJump = document.querySelector("#weekJump");
 const viewFilter = document.querySelector("#viewFilter");
 const resetProgress = document.querySelector("#resetProgress");
@@ -89,7 +88,7 @@ function buildPlan() {
     return {
       weekNumber,
       weekLabel: "Sun-Sat",
-      areas: ["Sun", "Tue", "Thu", "Sat"],
+      summary: "Daily workouts; Friday has two",
       days,
     };
   });
@@ -103,7 +102,7 @@ function sessionDay(area, workoutNumber) {
   return {
     area,
     workoutNumber,
-    title: `${area} Beginner - Workout ${workoutNumber}`,
+    title: `${area} ${PLAN_LEVEL} - Workout ${workoutNumber}`,
   };
 }
 
@@ -119,11 +118,6 @@ function loadState() {
   try {
     const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState) return normalizeState(JSON.parse(savedState));
-
-    for (const legacyKey of LEGACY_STORAGE_KEYS) {
-      const legacyState = localStorage.getItem(legacyKey);
-      if (legacyState) return normalizeState(JSON.parse(legacyState));
-    }
 
     return defaultState();
   } catch {
@@ -176,7 +170,6 @@ function loadCloudState({ force = false } = {}) {
     }
 
     const cloudState = normalizeState(response.state);
-    const shouldPersistMigration = hasLegacyIds(response.state);
     const localTime = Date.parse(state.updatedAt || "0") || 0;
     const cloudTime = Date.parse(cloudState.updatedAt || response.updatedAt || "0") || 0;
 
@@ -187,15 +180,7 @@ function loadCloudState({ force = false } = {}) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       render();
       isHydratingFromCloud = false;
-      if (shouldPersistMigration) {
-        state.updatedAt = new Date().toISOString();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        needsFullCloudSave = true;
-        saveCloudState();
-        updateSyncStatus("Migrated progress from Google Sheets to the weekly plan.");
-      } else {
-        updateSyncStatus("Loaded progress from Google Sheets.");
-      }
+      updateSyncStatus("Loaded progress from Google Sheets.");
     } else {
       updateSyncStatus(force ? "Local progress is newer. Saving it to Google Sheets..." : "Local progress is current. Future changes will sync to Google Sheets.");
       needsFullCloudSave = true;
@@ -248,7 +233,7 @@ function buildCloudPayload() {
   const workoutIds = full ? getAllWorkoutIds() : [...dirtyWorkoutIds];
   const weekNoteIds = full ? getAllWeekNoteIds() : [...dirtyWeekNoteIds];
   const payload = {
-    planVersion: "beginner-8week-weekly-v1",
+    planVersion: PLAN_VERSION,
     updatedAt: state.updatedAt,
     records: {
       workouts: workoutIds.map((id) => workoutRecord(id)),
@@ -278,7 +263,7 @@ function workoutRecord(id) {
   const day = dayFromItemId(id);
   return {
     id,
-    planVersion: "beginner-8week-weekly-v1",
+    planVersion: PLAN_VERSION,
     cycle: day?.weekNumber || "",
     day: day?.dayName || "",
     title: day?.workout.title || "",
@@ -291,11 +276,11 @@ function workoutRecord(id) {
 }
 
 function weekNoteRecord(id) {
-  const weekNumber = Number(id.match(/^weekly8-week-(\d+)-notes$/)?.[1] || "");
+  const weekNumber = Number(id.match(/^intermediate4-week-(\d+)-notes$/)?.[1] || "");
   const notes = state.notes[id] || {};
   return {
     id,
-    planVersion: "beginner-8week-weekly-v1",
+    planVersion: PLAN_VERSION,
     cycle: weekNumber || "",
     energy: notes.energy || "",
     soreness: notes.soreness || "",
@@ -307,7 +292,7 @@ function weekNoteRecord(id) {
 }
 
 function dayFromItemId(id) {
-  const match = id.match(/^weekly8-week-(\d+)-day-(\d+)-workout-(\d+)$/);
+  const match = id.match(/^intermediate4-week-(\d+)-day-(\d+)-workout-(\d+)$/);
   if (!match) return null;
   const weekNumber = Number(match[1]);
   const dayIndex = Number(match[2]);
@@ -356,16 +341,8 @@ function migrateState(value) {
   return migrated;
 }
 
-function hasLegacyIds(value) {
-  const completedIds = Object.keys(value?.completed || {});
-  const noteIds = Object.keys(value?.notes || {});
-  return [...completedIds, ...noteIds].some((id) => {
-    return id.startsWith("daily56-cycle-") || id.startsWith("daily48-cycle-") || id.startsWith("daily-week-") || /^week-\d+-(day-\d+|notes)$/.test(id);
-  });
-}
-
 function migrateItemId(id) {
-  const currentMatch = id.match(/^weekly8-week-(\d+)-day-(\d+)-workout-(\d+)$/);
+  const currentMatch = id.match(/^intermediate4-week-(\d+)-day-(\d+)-workout-(\d+)$/);
   if (currentMatch) {
     const weekNumber = Number(currentMatch[1]);
     const dayIndex = Number(currentMatch[2]);
@@ -373,74 +350,17 @@ function migrateItemId(id) {
     return isValidWorkoutSlot(weekNumber, dayIndex, workoutIndex) ? id : null;
   }
 
-  const legacy56Match = id.match(/^daily56-cycle-(\d+)-day-(\d+)$/);
-  if (legacy56Match) {
-    const zeroBasedWorkout = (Number(legacy56Match[1]) - 1) * 8 + Number(legacy56Match[2]);
-    return migrateWorkoutIndex(zeroBasedWorkout);
-  }
-
-  const legacy48Match = id.match(/^daily48-cycle-(\d+)-day-(\d+)$/);
-  if (legacy48Match) {
-    const zeroBasedWorkout = (Number(legacy48Match[1]) - 1) * 8 + Number(legacy48Match[2]);
-    return migrateWorkoutIndex(zeroBasedWorkout);
-  }
-
-  const legacyDailyMatch = id.match(/^daily-week-(\d+)-day-(\d+)$/);
-  if (legacyDailyMatch) {
-    const zeroBasedWorkout = (Number(legacyDailyMatch[1]) - 1) * 7 + Number(legacyDailyMatch[2]);
-    return migrateWorkoutIndex(zeroBasedWorkout);
-  }
-
-  const legacyWeeklyMatch = id.match(/^week-(\d+)-day-(\d+)$/);
-  if (legacyWeeklyMatch) {
-    const zeroBasedWorkout = (Number(legacyWeeklyMatch[1]) - 1) * 7 + Number(legacyWeeklyMatch[2]);
-    return migrateWorkoutIndex(zeroBasedWorkout);
-  }
-
   return null;
 }
 
 function migrateNoteId(id) {
-  const currentMatch = id.match(/^weekly8-week-(\d+)-notes$/);
+  const currentMatch = id.match(/^intermediate4-week-(\d+)-notes$/);
   if (currentMatch) {
     const weekNumber = Number(currentMatch[1]);
     return weekNumber >= 1 && weekNumber <= PLAN_WEEKS ? id : null;
   }
 
-  const legacy56Match = id.match(/^daily56-cycle-(\d+)-notes$/);
-  if (legacy56Match) {
-    const weekNumber = Number(legacy56Match[1]);
-    return weekNumber >= 1 && weekNumber <= PLAN_WEEKS ? weekNoteId(weekNumber) : null;
-  }
-
-  const legacy48Match = id.match(/^daily48-cycle-(\d+)-notes$/);
-  if (legacy48Match) {
-    const weekNumber = Number(legacy48Match[1]);
-    return weekNumber >= 1 && weekNumber <= PLAN_WEEKS ? weekNoteId(weekNumber) : null;
-  }
-
-  const legacyMatch = id.match(/^week-(\d+)-notes$/);
-  if (legacyMatch) {
-    const weekNumber = Number(legacyMatch[1]);
-    return weekNumber >= 1 && weekNumber <= PLAN_WEEKS ? weekNoteId(weekNumber) : null;
-  }
-
   return null;
-}
-
-function migrateWorkoutIndex(zeroBasedWorkout) {
-  if (zeroBasedWorkout < 0 || zeroBasedWorkout >= PLAN_WEEKS * WORKOUTS_PER_WEEK) return null;
-
-  const weekNumber = Math.floor(zeroBasedWorkout / WORKOUTS_PER_WEEK) + 1;
-  const workoutInWeek = zeroBasedWorkout % WORKOUTS_PER_WEEK;
-  const slot = weeklyWorkoutSlots()[workoutInWeek];
-  return itemId(weekNumber, slot.dayIndex, slot.workoutIndex);
-}
-
-function weeklyWorkoutSlots() {
-  return weeklyTemplate.flatMap((day, dayIndex) => {
-    return day.workouts.map((workout, workoutIndex) => ({ dayIndex, workoutIndex }));
-  });
 }
 
 function isValidWorkoutSlot(weekNumber, dayIndex, workoutIndex) {
@@ -473,7 +393,9 @@ function renderProgress() {
   });
 
   const totalCompleted = Object.values(completed).reduce((sum, count) => sum + count, 0);
+  const totalPlanned = Object.values(planned).reduce((sum, count) => sum + count, 0);
   totalCompletedEl.textContent = totalCompleted;
+  totalPlannedEl.textContent = totalPlanned;
   progressGrid.innerHTML = "";
 
   Object.keys(areaClass).forEach((area) => {
@@ -511,7 +433,7 @@ function renderWeeks() {
     weekEl.dataset.week = String(week.weekNumber);
     fragment.querySelector("[data-week-label]").textContent = week.weekLabel;
     fragment.querySelector("[data-title]").textContent = `Week ${week.weekNumber}`;
-    fragment.querySelector("[data-areas]").textContent = `${week.areas.join(" + ")} workout days`;
+    fragment.querySelector("[data-areas]").textContent = week.summary;
     workoutSummary.textContent = completed === WORKOUTS_PER_WEEK ? "Week workouts complete" : "Weekly workouts";
     workoutPanel.open = completed !== WORKOUTS_PER_WEEK;
 
@@ -584,7 +506,7 @@ function renderWorkout(weekNumber, dayIndex, workoutIndex, workout) {
 
   const meta = document.createElement("p");
   meta.className = "workout-meta";
-  meta.textContent = `Beginner level.`;
+  meta.textContent = `${PLAN_LEVEL} level.`;
 
   block.append(checkLabel, pill, meta, renderSessionNote(id));
   return block;
@@ -660,11 +582,11 @@ function getCurrentWeekNumber() {
 }
 
 function itemId(weekNumber, dayIndex, workoutIndex) {
-  return `weekly8-week-${weekNumber}-day-${dayIndex}-workout-${workoutIndex}`;
+  return `intermediate4-week-${weekNumber}-day-${dayIndex}-workout-${workoutIndex}`;
 }
 
 function weekNoteId(weekNumber) {
-  return `weekly8-week-${weekNumber}-notes`;
+  return `intermediate4-week-${weekNumber}-notes`;
 }
 
 function renderWeekJump() {

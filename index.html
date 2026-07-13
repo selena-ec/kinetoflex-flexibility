@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Beginner Flexibility Tracker</title>
+    <title>Intermediate Flexibility Tracker</title>
     <link rel="stylesheet" href="styles.css">
     <script src="config.js"></script>
     <script src="app.js" defer></script>
@@ -12,7 +12,7 @@
     <header class="app-header">
       <div>
         <p class="eyebrow">Kinetoflex ballet support</p>
-        <h1>Beginner Flexibility Tracker</h1>
+        <h1>Intermediate Flexibility Tracker</h1>
       </div>
       <button class="secondary-button" id="resetProgress" type="button">Reset progress</button>
     </header>
@@ -20,15 +20,15 @@
     <main>
       <section class="summary-band" aria-labelledby="summaryTitle">
         <div>
-          <h2 id="summaryTitle">8-week rolling plan</h2>
+          <h2 id="summaryTitle">4-week rolling plan</h2>
           <p>
-            Track the beginner Hip Mobility, Front Split, Middle Split, and Pancake workouts.
-            Train flexibility four days each week, with two exercises on each workout day.
+            Track the intermediate level Hip Mobility, Front Split, Middle Split, and Pancake workouts.
+            Train flexibility daily, one exercise per day except Friday which will take two exercises.
           </p>
         </div>
         <div class="total-progress" aria-label="Total completed workouts">
           <span id="totalCompleted">0</span>
-          <span>of 64 workouts complete</span>
+          <span>of <span id="totalPlanned">32</span> workouts complete</span>
         </div>
       </section>
 
