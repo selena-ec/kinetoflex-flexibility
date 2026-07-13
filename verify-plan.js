@@ -4,11 +4,11 @@ const weeklyTemplate = [
   [["Front Split", 1]],
   [["Middle Split", 1]],
   [["Pancake", 1]],
-  [["Hip Mobility", 2]],
   [
+    ["Hip Mobility", 2],
     ["Front Split", 2],
-    ["Middle Split", 2],
   ],
+  [["Middle Split", 2]],
   [["Pancake", 2]],
 ];
 
