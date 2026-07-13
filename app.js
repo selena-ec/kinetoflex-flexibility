@@ -9,13 +9,13 @@ const CLOUD_ENABLED = Boolean(CLOUD_URL);
 const SAVE_DEBOUNCE_MS = 700;
 
 const weeklyTemplate = [
-  dayPlan("Sun", [sessionDay("Hip Mobility", 1)]),
-  dayPlan("Mon", [sessionDay("Front Split", 1)]),
-  dayPlan("Tue", [sessionDay("Middle Split", 1)]),
-  dayPlan("Wed", [sessionDay("Pancake", 1)]),
-  dayPlan("Thu", [sessionDay("Hip Mobility", 2)]),
-  dayPlan("Fri", [sessionDay("Front Split", 2), sessionDay("Middle Split", 2)]),
-  dayPlan("Sat", [sessionDay("Pancake", 2)]),
+  dayPlan("Mon", [sessionDay("Hip Mobility", 1)]),
+  dayPlan("Tue", [sessionDay("Front Split", 1)]),
+  dayPlan("Wed", [sessionDay("Middle Split", 1)]),
+  dayPlan("Thu", [sessionDay("Pancake", 1)]),
+  dayPlan("Fri", [sessionDay("Hip Mobility", 2), sessionDay("Front Split", 2)]),
+  dayPlan("Sat", [sessionDay("Middle Split", 2)]),
+  dayPlan("Sun", [sessionDay("Pancake", 2)]),
 ];
 
 const WORKOUTS_PER_WEEK = weeklyTemplate.reduce((total, day) => total + day.workouts.length, 0);
@@ -87,7 +87,7 @@ function buildPlan() {
 
     return {
       weekNumber,
-      weekLabel: "Sun-Sat",
+      weekLabel: "Mon-Sun",
       summary: "Daily workouts; Friday has two",
       days,
     };
