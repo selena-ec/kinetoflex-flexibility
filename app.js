@@ -438,7 +438,9 @@ function renderWeeks() {
     workoutPanel.open = completed !== WORKOUTS_PER_WEEK;
 
     week.days.forEach((day, dayIndex) => {
-      daysEl.append(renderDay(week.weekNumber, dayIndex, day));
+      day.workouts.forEach((workout, workoutIndex) => {
+        daysEl.append(renderWorkoutCard(week.weekNumber, dayIndex, workoutIndex, day, workout));
+      });
     });
 
     hydrateWeekNotes(fragment, week.weekNumber);
@@ -447,36 +449,17 @@ function renderWeeks() {
   });
 }
 
-function renderDay(weekNumber, dayIndex, day) {
+function renderWorkoutCard(weekNumber, dayIndex, workoutIndex, day, workout) {
+  const id = itemId(weekNumber, dayIndex, workoutIndex);
   const card = document.createElement("section");
-  card.className = `day-card ${day.workouts.length ? "" : "open-day"}`;
-  const dayComplete = day.workouts.length > 0 && day.workouts.every((workout, workoutIndex) => {
-    return state.completed[itemId(weekNumber, dayIndex, workoutIndex)];
-  });
-  if (dayComplete) card.classList.add("complete");
+  card.className = "day-card";
+  if (state.completed[id]) card.classList.add("complete");
 
   const top = document.createElement("div");
   top.className = "day-topline";
   top.innerHTML = `<span class="day-number">${day.dayName}</span>`;
-  card.append(top);
 
-  if (!day.workouts.length) {
-    const title = document.createElement("strong");
-    title.className = "open-day-title";
-    title.textContent = "Open day";
-
-    const note = document.createElement("p");
-    note.className = "workout-meta";
-    note.textContent = "Available for another program.";
-
-    card.append(title, note);
-    return card;
-  }
-
-  day.workouts.forEach((workout, workoutIndex) => {
-    card.append(renderWorkout(weekNumber, dayIndex, workoutIndex, workout));
-  });
-
+  card.append(top, renderWorkout(weekNumber, dayIndex, workoutIndex, workout));
   return card;
 }
 
