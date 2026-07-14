@@ -132,19 +132,44 @@ main {
 
 .total-progress {
   display: grid;
-  gap: 2px;
-  min-width: 180px;
-  padding: 18px;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  min-width: 190px;
+  padding: 18px 22px;
   border-radius: 8px;
   background: var(--blue-soft);
   color: var(--blue);
   text-align: center;
 }
 
-.total-progress span:first-child {
-  font-size: 2.5rem;
+.total-progress-count {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
   font-weight: 800;
   line-height: 1;
+}
+
+#totalCompleted {
+  font-size: 2.75rem;
+}
+
+.total-progress-separator {
+  color: rgba(35, 110, 159, 0.58);
+  font-size: 1.3rem;
+}
+
+#totalPlanned {
+  color: rgba(35, 110, 159, 0.74);
+  font-size: 1.45rem;
+}
+
+.total-progress-label {
+  color: var(--blue);
+  font-size: 0.92rem;
+  font-weight: 750;
 }
 
 .sync-band {
