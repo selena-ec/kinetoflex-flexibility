@@ -330,15 +330,17 @@ textarea {
 
 .day-list {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  align-items: start;
   margin-top: 16px;
 }
 
 .day-card {
   display: grid;
-  min-height: 176px;
-  padding: 12px;
+  align-content: start;
+  min-height: 0;
+  padding: 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
@@ -372,11 +374,11 @@ textarea {
 .check-row {
   display: grid;
   grid-template-columns: 24px 1fr;
-  gap: 8px;
+  gap: 10px;
   align-items: start;
   margin-top: 12px;
   color: var(--ink);
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 800;
 }
 
@@ -436,16 +438,16 @@ textarea {
 }
 
 .session-note {
-  align-self: end;
   margin-top: 12px;
 }
 
 .session-note textarea {
-  min-height: 140px;
+  min-height: 88px;
   padding: 10px;
   font-size: 0.84rem;
   line-height: 1.4;
   resize: vertical;
+  max-height: 180px;
 }
 
 .workout-panel {
