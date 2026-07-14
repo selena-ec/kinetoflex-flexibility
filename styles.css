@@ -416,7 +416,7 @@ textarea {
 }
 
 .session-note textarea {
-  min-height: 96px;
+  min-height: 140px;
   padding: 10px;
   font-size: 0.84rem;
   line-height: 1.4;
