@@ -517,8 +517,7 @@ function renderSessionNote(id) {
   wrapper.className = "session-note";
   wrapper.innerHTML = "<span>Session note</span>";
 
-  const input = document.createElement("input");
-  input.type = "text";
+  const input = document.createElement("textarea");
   input.placeholder = "Optional";
   input.value = state.notes[id]?.session || "";
   input.addEventListener("input", () => {
