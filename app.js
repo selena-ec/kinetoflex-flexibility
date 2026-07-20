@@ -60,6 +60,11 @@ viewFilter.addEventListener("change", render);
 
 syncNow.addEventListener("click", () => {
   window.clearTimeout(saveTimer);
+  if (hasPendingLocalChanges()) {
+    needsFullCloudSave = true;
+    saveCloudState();
+    return;
+  }
   loadCloudState({ force: true });
 });
 
@@ -139,6 +144,10 @@ function scheduleCloudSave() {
   saveTimer = window.setTimeout(saveCloudState, SAVE_DEBOUNCE_MS);
 }
 
+function hasPendingLocalChanges() {
+  return needsFullCloudSave || dirtyWorkoutIds.size > 0 || dirtyWeekNoteIds.size > 0;
+}
+
 function loadCloudState({ force = false } = {}) {
   if (!CLOUD_ENABLED) {
     syncNow.disabled = true;
@@ -199,6 +208,7 @@ function loadCloudState({ force = false } = {}) {
 
 function saveCloudState() {
   if (!CLOUD_ENABLED) return;
+  window.clearTimeout(saveTimer);
   updateSyncStatus("Saving to Google Sheets...");
 
   const iframeName = "flexTrackerCloudSaveFrame";
@@ -360,7 +370,7 @@ function migrateNoteId(id) {
     return weekNumber >= 1 && weekNumber <= PLAN_WEEKS ? id : null;
   }
 
-  return null;
+  return migrateItemId(id);
 }
 
 function isValidWorkoutSlot(weekNumber, dayIndex, workoutIndex) {
